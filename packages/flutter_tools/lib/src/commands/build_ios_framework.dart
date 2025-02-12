@@ -33,11 +33,11 @@ abstract class BuildFrameworkCommand extends BuildSubCommand {
     Cache? cache,
     Platform? platform,
     required super.logger,
-  }) : _injectedFlutterVersion = flutterVersion,
-       _buildSystem = buildSystem,
-       _injectedCache = cache,
-       _injectedPlatform = platform,
-       super(verboseHelp: verboseHelp) {
+  })  : _injectedFlutterVersion = flutterVersion,
+        _buildSystem = buildSystem,
+        _injectedCache = cache,
+        _injectedPlatform = platform,
+        super(verboseHelp: verboseHelp) {
     addTreeShakeIconsFlag();
     usesTargetOption();
     usesPubOption();
@@ -52,40 +52,34 @@ abstract class BuildFrameworkCommand extends BuildSubCommand {
       ..addFlag(
         'debug',
         defaultsTo: true,
-        help:
-            'Whether to produce a framework for the debug build configuration. '
+        help: 'Whether to produce a framework for the debug build configuration. '
             'By default, all build configurations are built.',
       )
       ..addFlag(
         'profile',
         defaultsTo: true,
-        help:
-            'Whether to produce a framework for the profile build configuration. '
+        help: 'Whether to produce a framework for the profile build configuration. '
             'By default, all build configurations are built.',
       )
       ..addFlag(
         'release',
         defaultsTo: true,
-        help:
-            'Whether to produce a framework for the release build configuration. '
+        help: 'Whether to produce a framework for the release build configuration. '
             'By default, all build configurations are built.',
       )
       ..addFlag(
         'cocoapods',
-        help:
-            'Produce a Flutter.podspec instead of an engine Flutter.xcframework (recommended if host app uses CocoaPods).',
+        help: 'Produce a Flutter.podspec instead of an engine Flutter.xcframework (recommended if host app uses CocoaPods).',
       )
       ..addFlag(
         'plugins',
         defaultsTo: true,
-        help:
-            'Whether to produce frameworks for the plugins. '
+        help: 'Whether to produce frameworks for the plugins. '
             'This is intended for cases where plugins are already being built separately.',
       )
       ..addFlag(
         'static',
-        help:
-            'Build plugins as static frameworks. Link on, but do not embed these frameworks in the existing Xcode project.',
+        help: 'Build plugins as static frameworks. Link on, but do not embed these frameworks in the existing Xcode project.',
       )
       ..addOption(
         'output',
@@ -96,8 +90,7 @@ abstract class BuildFrameworkCommand extends BuildSubCommand {
       ..addFlag(
         'force',
         abbr: 'f',
-        help:
-            'Force Flutter.podspec creation on the master channel. This is only intended for testing the tool itself.',
+        help: 'Force Flutter.podspec creation on the master channel. This is only intended for testing the tool itself.',
         hide: !verboseHelp,
       );
   }
@@ -164,15 +157,9 @@ abstract class BuildFrameworkCommand extends BuildSubCommand {
         framework.path,
         ...framework.parent
             .listSync()
-<<<<<<< HEAD
-            .where((FileSystemEntity entity) =>
-        entity.basename.endsWith('dSYM') && !entity.basename.startsWith('Flutter'))
-=======
             .where(
-              (FileSystemEntity entity) =>
-                  entity.basename.endsWith('dSYM') && !entity.basename.startsWith('Flutter'),
+              (FileSystemEntity entity) => entity.basename.endsWith('dSYM') && !entity.basename.startsWith('Flutter'),
             )
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
             .map((FileSystemEntity entity) => <String>['-debug-symbols', entity.path])
             .expand<String>((List<String> parameter) => parameter),
       ],
@@ -224,15 +211,14 @@ class BuildIOSFrameworkCommand extends BuildFrameworkCommand {
   final String name = 'ios-framework';
 
   @override
-  final String description =
-      'Produces .xcframeworks for a Flutter project '
+  final String description = 'Produces .xcframeworks for a Flutter project '
       'and its plugins for integration into existing, plain iOS Xcode projects.\n'
       'This can only be run on macOS hosts.';
 
   @override
   Future<Set<DevelopmentArtifact>> get requiredArtifacts async => const <DevelopmentArtifact>{
-    DevelopmentArtifact.iOS,
-  };
+        DevelopmentArtifact.iOS,
+      };
 
   @override
   Future<void> validateCommand() async {
@@ -245,9 +231,7 @@ class BuildIOSFrameworkCommand extends BuildFrameworkCommand {
 
   @override
   Future<FlutterCommandResult> runCommand() async {
-    final String outputArgument =
-        stringArg('output') ??
-        globals.fs.path.join(globals.fs.currentDirectory.path, 'build', 'ios', 'framework');
+    final String outputArgument = stringArg('output') ?? globals.fs.path.join(globals.fs.currentDirectory.path, 'build', 'ios', 'framework');
 
     if (outputArgument.isEmpty) {
       throwToolExit('--output is required.');
@@ -309,9 +293,7 @@ class BuildIOSFrameworkCommand extends BuildFrameworkCommand {
 
       // Copy the native assets. The native assets have already been signed in
       // buildNativeAssetsMacOS.
-      final Directory nativeAssetsDirectory = globals.fs
-          .directory(getBuildDirectory())
-          .childDirectory('native_assets/ios/');
+      final Directory nativeAssetsDirectory = globals.fs.directory(getBuildDirectory()).childDirectory('native_assets/ios/');
       if (await nativeAssetsDirectory.exists()) {
         final ProcessResult rsyncResult = await globals.processManager.run(<Object>[
           'rsync',
@@ -373,11 +355,7 @@ class BuildIOSFrameworkCommand extends BuildFrameworkCommand {
     final Status status = globals.logger.startProgress(' ├─Creating Flutter.podspec...');
     try {
       final GitTagVersion gitTagVersion = flutterVersion.gitTagVersion;
-      if (!force &&
-          (gitTagVersion.x == null ||
-              gitTagVersion.y == null ||
-              gitTagVersion.z == null ||
-              gitTagVersion.commits != 0)) {
+      if (!force && (gitTagVersion.x == null || gitTagVersion.y == null || gitTagVersion.z == null || gitTagVersion.commits != 0)) {
         throwToolExit(
           '--cocoapods is only supported on the beta or stable channel. Detected version is ${flutterVersion.frameworkVersion}',
         );
@@ -490,8 +468,7 @@ end
           platform: globals.platform,
           usage: globals.flutterUsage,
           analytics: globals.analytics,
-          engineVersion:
-              globals.artifacts!.usesLocalArtifacts ? null : globals.flutterVersion.engineRevision,
+          engineVersion: globals.artifacts!.usesLocalArtifacts ? null : globals.flutterVersion.engineRevision,
           generateDartPluginRegistry: true,
         );
         Target target;
@@ -589,8 +566,7 @@ end
         '$simulatorConfiguration-iphonesimulator',
       );
 
-      final Iterable<Directory> products =
-          iPhoneBuildConfiguration.listSync(followLinks: false).whereType<Directory>();
+      final Iterable<Directory> products = iPhoneBuildConfiguration.listSync(followLinks: false).whereType<Directory>();
       for (final Directory builtProduct in products) {
         for (final FileSystemEntity podProduct in builtProduct.listSync(followLinks: false)) {
           final String podFrameworkName = podProduct.basename;
@@ -601,9 +577,7 @@ end
 
           final List<Directory> frameworks = <Directory>[
             podProduct as Directory,
-            simulatorBuildConfiguration
-                .childDirectory(builtProduct.basename)
-                .childDirectory(podFrameworkName),
+            simulatorBuildConfiguration.childDirectory(builtProduct.basename).childDirectory(podFrameworkName),
           ];
 
           await BuildFrameworkCommand.produceXCFramework(

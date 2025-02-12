@@ -92,8 +92,7 @@ List<Target> _kDefaultTargets = <Target>[
 /// Assemble provides a low level API to interact with the flutter tool build
 /// system.
 class AssembleCommand extends FlutterCommand {
-  AssembleCommand({bool verboseHelp = false, required BuildSystem buildSystem})
-    : _buildSystem = buildSystem {
+  AssembleCommand({bool verboseHelp = false, required BuildSystem buildSystem}) : _buildSystem = buildSystem {
     argParser.addMultiOption(
       'define',
       abbr: 'd',
@@ -107,29 +106,25 @@ class AssembleCommand extends FlutterCommand {
     argParser.addMultiOption(
       'input',
       abbr: 'i',
-      help:
-          'Allows passing additional inputs with "--input=key=value". Unlike '
+      help: 'Allows passing additional inputs with "--input=key=value". Unlike '
           'defines, additional inputs do not generate a new configuration; instead '
           'they are treated as dependencies of the targets that use them.',
     );
     argParser.addOption(
       'depfile',
-      help:
-          'A file path where a depfile will be written. '
+      help: 'A file path where a depfile will be written. '
           'This contains all build inputs and outputs in a Make-style syntax.',
     );
     argParser.addOption(
       'build-inputs',
-      help:
-          'A file path where a newline-separated '
+      help: 'A file path where a newline-separated '
           'file containing all inputs used will be written after a build. '
           'This file is not included as a build input or output. This file is not '
           'written if the build fails for any reason.',
     );
     argParser.addOption(
       'build-outputs',
-      help:
-          'A file path where a newline-separated '
+      help: 'A file path where a newline-separated '
           'file containing all outputs created will be written after a build. '
           'This file is not included as a build input or output. This file is not '
           'written if the build fails for any reason.',
@@ -137,8 +132,7 @@ class AssembleCommand extends FlutterCommand {
     argParser.addOption(
       'output',
       abbr: 'o',
-      help:
-          'A directory where output '
+      help: 'A directory where output '
           'files will be written. Must be either absolute or relative from the '
           'root of the current Flutter project.',
     );
@@ -165,17 +159,17 @@ class AssembleCommand extends FlutterCommand {
 
   @override
   Future<CustomDimensions> get usageValues async => CustomDimensions(
-    commandBuildBundleTargetPlatform: _environment.defines[kTargetPlatform],
-    commandBuildBundleIsModule: _flutterProject.isModule,
-  );
+        commandBuildBundleTargetPlatform: _environment.defines[kTargetPlatform],
+        commandBuildBundleIsModule: _flutterProject.isModule,
+      );
 
   @override
   Future<Event> unifiedAnalyticsUsageValues(String commandPath) async => Event.commandUsageValues(
-    workflow: commandPath,
-    commandHasTerminal: hasTerminal,
-    buildBundleTargetPlatform: _environment.defines[kTargetPlatform],
-    buildBundleIsModule: _flutterProject.isModule,
-  );
+        workflow: commandPath,
+        commandHasTerminal: hasTerminal,
+        buildBundleTargetPlatform: _environment.defines[kTargetPlatform],
+        buildBundleIsModule: _flutterProject.isModule,
+      );
 
   @override
   Future<Set<DevelopmentArtifact>> get requiredArtifacts async {
@@ -245,9 +239,7 @@ class AssembleCommand extends FlutterCommand {
     final Artifacts artifacts = globals.artifacts!;
     final Environment result = Environment(
       outputDir: globals.fs.directory(output),
-      buildDir: _flutterProject.directory
-          .childDirectory('.dart_tool')
-          .childDirectory('flutter_build'),
+      buildDir: _flutterProject.directory.childDirectory('.dart_tool').childDirectory('flutter_build'),
       projectDir: _flutterProject.directory,
       packageConfigPath: packageConfigPath(),
       defines: _parseDefines(stringsArg('define')),
@@ -280,8 +272,7 @@ class AssembleCommand extends FlutterCommand {
     }
     final ArgResults argumentResults = argResults!;
     if (argumentResults.wasParsed(FlutterOptions.kExtraGenSnapshotOptions)) {
-      results[kExtraGenSnapshotOptions] =
-          (argumentResults[FlutterOptions.kExtraGenSnapshotOptions] as List<String>).join(',');
+      results[kExtraGenSnapshotOptions] = (argumentResults[FlutterOptions.kExtraGenSnapshotOptions] as List<String>).join(',');
     }
 
     final Map<String, Object?> defineConfigJsonMap = extractDartDefineConfigJsonMap();
@@ -291,14 +282,11 @@ class AssembleCommand extends FlutterCommand {
     }
 
     results[kDeferredComponents] = 'false';
-    if (_flutterProject.manifest.deferredComponents != null &&
-        isDeferredComponentsTargets() &&
-        !isDebug()) {
+    if (_flutterProject.manifest.deferredComponents != null && isDeferredComponentsTargets() && !isDebug()) {
       results[kDeferredComponents] = 'true';
     }
     if (argumentResults.wasParsed(FlutterOptions.kExtraFrontEndOptions)) {
-      results[kExtraFrontEndOptions] =
-          (argumentResults[FlutterOptions.kExtraFrontEndOptions] as List<String>).join(',');
+      results[kExtraFrontEndOptions] = (argumentResults[FlutterOptions.kExtraFrontEndOptions] as List<String>).join(',');
     }
     return results;
   }
@@ -327,18 +315,6 @@ class AssembleCommand extends FlutterCommand {
     }
     if (deferredTargets.isNotEmpty) {
       // Record to analytics that DeferredComponents is being used.
-<<<<<<< HEAD
-      globals.analytics.send(Event.flutterBuildInfo(
-        label: 'assemble-deferred-components',
-        buildType: 'android',
-        settings: deferredTargets.map((Target t) => t.name).join(','),
-      ));
-    }
-    if (_flutterProject.manifest.deferredComponents != null
-        && decodedDefines.contains('validate-deferred-components=true')
-        && deferredTargets.isNotEmpty
-        && !isDebug()) {
-=======
       globals.analytics.send(
         Event.flutterBuildInfo(
           label: 'assemble-deferred-components',
@@ -347,11 +323,7 @@ class AssembleCommand extends FlutterCommand {
         ),
       );
     }
-    if (_flutterProject.manifest.deferredComponents != null &&
-        decodedDefines.contains('validate-deferred-components=true') &&
-        deferredTargets.isNotEmpty &&
-        !isDebug()) {
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
+    if (_flutterProject.manifest.deferredComponents != null && decodedDefines.contains('validate-deferred-components=true') && deferredTargets.isNotEmpty && !isDebug()) {
       // Add deferred components validation target that require loading units.
       target = DeferredComponentsGenSnapshotValidatorTarget(
         deferredComponentsDependencies: deferredTargets.cast<AndroidAotDeferredComponentsBundle>(),
@@ -368,10 +340,7 @@ class AssembleCommand extends FlutterCommand {
       target!,
       _environment,
       buildSystemConfig: BuildSystemConfig(
-        resourcePoolSize:
-            argumentResults.wasParsed('resource-pool-size')
-                ? int.tryParse(stringArg('resource-pool-size')!)
-                : null,
+        resourcePoolSize: argumentResults.wasParsed('resource-pool-size') ? int.tryParse(stringArg('resource-pool-size')!) : null,
       ),
     );
     if (!result.success) {

@@ -62,28 +62,16 @@ String _getOutputAppLinkSettingsTaskFor(String buildVariant) {
 /// The directory where the APK artifact is generated.
 Directory getApkDirectory(FlutterProject project) {
   return project.isModule
-      ? project.android.buildDirectory
-          .childDirectory('host')
-          .childDirectory('outputs')
-          .childDirectory('apk')
-      : project.android.buildDirectory
-          .childDirectory('app')
-          .childDirectory('outputs')
-          .childDirectory('flutter-apk');
+      ? project.android.buildDirectory.childDirectory('host').childDirectory('outputs').childDirectory('apk')
+      : project.android.buildDirectory.childDirectory('app').childDirectory('outputs').childDirectory('flutter-apk');
 }
 
 /// The directory where the app bundle artifact is generated.
 @visibleForTesting
 Directory getBundleDirectory(FlutterProject project) {
   return project.isModule
-      ? project.android.buildDirectory
-          .childDirectory('host')
-          .childDirectory('outputs')
-          .childDirectory('bundle')
-      : project.android.buildDirectory
-          .childDirectory('app')
-          .childDirectory('outputs')
-          .childDirectory('bundle');
+      ? project.android.buildDirectory.childDirectory('host').childDirectory('outputs').childDirectory('bundle')
+      : project.android.buildDirectory.childDirectory('app').childDirectory('outputs').childDirectory('bundle');
 }
 
 /// The directory where the repo is generated.
@@ -122,14 +110,8 @@ String getAarTaskFor(BuildInfo buildInfo) {
 }
 
 @visibleForTesting
-const String androidX86DeprecationWarning =
-<<<<<<< HEAD
-  'Support for Android x86 targets will be removed in the next stable release after 3.27. '
-  'See https://github.com/flutter/flutter/issues/157543 for details.';
-=======
-    'Support for Android x86 targets will be removed in the next stable release after 3.27. '
+const String androidX86DeprecationWarning = 'Support for Android x86 targets will be removed in the next stable release after 3.27. '
     'See https://github.com/flutter/flutter/issues/157543 for details.';
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
 
 /// Returns the output APK file names for a given [AndroidBuildInfo].
 ///
@@ -162,15 +144,15 @@ class AndroidGradleBuilder implements AndroidBuilder {
     required GradleUtils gradleUtils,
     required Platform platform,
     required AndroidStudio? androidStudio,
-  }) : _java = java,
-       _logger = logger,
-       _fileSystem = fileSystem,
-       _artifacts = artifacts,
-       _analytics = analytics,
-       _gradleUtils = gradleUtils,
-       _androidStudio = androidStudio,
-       _fileSystemUtils = FileSystemUtils(fileSystem: fileSystem, platform: platform),
-       _processUtils = ProcessUtils(logger: logger, processManager: processManager);
+  })  : _java = java,
+        _logger = logger,
+        _fileSystem = fileSystem,
+        _artifacts = artifacts,
+        _analytics = analytics,
+        _gradleUtils = gradleUtils,
+        _androidStudio = androidStudio,
+        _fileSystemUtils = FileSystemUtils(fileSystem: fileSystem, platform: platform),
+        _processUtils = ProcessUtils(logger: logger, processManager: processManager);
 
   final Java? _java;
   final Logger _logger;
@@ -199,14 +181,7 @@ class AndroidGradleBuilder implements AndroidBuilder {
       outputDirectory = outputDirectory.childDirectory('host');
     }
 
-<<<<<<< HEAD
-    final bool containsX86Targets = androidBuildInfo.where(
-      (AndroidBuildInfo info) => info.containsX86Target,
-    ).isNotEmpty;
-=======
-    final bool containsX86Targets =
-        androidBuildInfo.where((AndroidBuildInfo info) => info.containsX86Target).isNotEmpty;
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
+    final bool containsX86Targets = androidBuildInfo.where((AndroidBuildInfo info) => info.containsX86Target).isNotEmpty;
     if (containsX86Targets) {
       _logger.printWarning(androidX86DeprecationWarning);
     }
@@ -220,10 +195,9 @@ class AndroidGradleBuilder implements AndroidBuilder {
       );
     }
     printHowToConsumeAar(
-      buildModes:
-          androidBuildInfo.map<String>((AndroidBuildInfo androidBuildInfo) {
-            return androidBuildInfo.buildInfo.modeName;
-          }).toSet(),
+      buildModes: androidBuildInfo.map<String>((AndroidBuildInfo androidBuildInfo) {
+        return androidBuildInfo.buildInfo.modeName;
+      }).toSet(),
       androidPackage: project.manifest.androidPackage,
       repoDirectory: getRepoDirectory(outputDirectory),
       buildNumber: buildNumber,
@@ -469,8 +443,7 @@ class AndroidGradleBuilder implements AndroidBuilder {
 
     // Assembly work starts here.
     final BuildInfo buildInfo = androidBuildInfo.buildInfo;
-    final String assembleTask =
-        isBuildingBundle ? getBundleTaskFor(buildInfo) : getAssembleTaskFor(buildInfo);
+    final String assembleTask = isBuildingBundle ? getBundleTaskFor(buildInfo) : getAssembleTaskFor(buildInfo);
 
     if (_logger.isVerbose) {
       options.add('--full-stacktrace');
@@ -504,17 +477,12 @@ class AndroidGradleBuilder implements AndroidBuilder {
         '-Ptarget-platform=${_getTargetPlatformByLocalEnginePath(localEngineInfo.targetOutPath)}',
       );
     } else if (androidBuildInfo.targetArchs.isNotEmpty) {
-      final String targetPlatforms = androidBuildInfo.targetArchs
-          .map((AndroidArch e) => e.platformName)
-          .join(',');
+      final String targetPlatforms = androidBuildInfo.targetArchs.map((AndroidArch e) => e.platformName).join(',');
       options.add('-Ptarget-platform=$targetPlatforms');
     }
     options.add('-Ptarget=$target');
     // If using v1 embedding, we want to use FlutterApplication as the base app.
-    final String baseApplicationName =
-        project.android.getEmbeddingVersion() == AndroidEmbeddingVersion.v2
-            ? 'android.app.Application'
-            : 'io.flutter.app.FlutterApplication';
+    final String baseApplicationName = project.android.getEmbeddingVersion() == AndroidEmbeddingVersion.v2 ? 'android.app.Application' : 'io.flutter.app.FlutterApplication';
     options.add('-Pbase-application-name=$baseApplicationName');
     final List<DeferredComponent>? deferredComponents = project.manifest.deferredComponents;
     if (deferredComponents != null) {
@@ -588,10 +556,9 @@ class AndroidGradleBuilder implements AndroidBuilder {
 
     if (isBuildingBundle) {
       final File bundleFile = findBundleFile(project, buildInfo, _logger, _analytics);
-      final String appSize =
-          (buildInfo.mode == BuildMode.debug)
-              ? '' // Don't display the size when building a debug variant.
-              : ' (${getSizeAsPlatformMB(bundleFile.lengthSync())})';
+      final String appSize = (buildInfo.mode == BuildMode.debug)
+          ? '' // Don't display the size when building a debug variant.
+          : ' (${getSizeAsPlatformMB(bundleFile.lengthSync())})';
 
       if (buildInfo.codeSizeDirectory != null) {
         await _performCodeSizeAnalysis('aab', bundleFile, androidBuildInfo);
@@ -605,10 +572,7 @@ class AndroidGradleBuilder implements AndroidBuilder {
       return;
     }
     // Gradle produced APKs.
-    final Iterable<String> apkFilesPaths =
-        project.isModule
-            ? findApkFilesModule(project, androidBuildInfo, _logger, _analytics)
-            : listApkPaths(androidBuildInfo);
+    final Iterable<String> apkFilesPaths = project.isModule ? findApkFilesModule(project, androidBuildInfo, _logger, _analytics) : listApkPaths(androidBuildInfo);
     final Directory apkDirectory = getApkDirectory(project);
 
     // Generate sha1 for every generated APKs.
@@ -627,10 +591,9 @@ class AndroidGradleBuilder implements AndroidBuilder {
       final File apkShaFile = apkDirectory.childFile('$filename.sha1');
       apkShaFile.writeAsStringSync(_calculateSha(apkFile));
 
-      final String appSize =
-          (buildInfo.mode == BuildMode.debug)
-              ? '' // Don't display the size when building a debug variant.
-              : ' (${getSizeAsPlatformMB(apkFile.lengthSync())})';
+      final String appSize = (buildInfo.mode == BuildMode.debug)
+          ? '' // Don't display the size when building a debug variant.
+          : ' (${getSizeAsPlatformMB(apkFile.lengthSync())})';
       _logger.printStatus(
         '${_logger.terminal.successMark} '
         'Built ${_fileSystem.path.relative(apkFile.path)}$appSize',
@@ -655,12 +618,8 @@ class AndroidGradleBuilder implements AndroidBuilder {
     );
     final String archName = androidBuildInfo.targetArchs.single.archName;
     final BuildInfo buildInfo = androidBuildInfo.buildInfo;
-    final File aotSnapshot = _fileSystem
-        .directory(buildInfo.codeSizeDirectory)
-        .childFile('snapshot.$archName.json');
-    final File precompilerTrace = _fileSystem
-        .directory(buildInfo.codeSizeDirectory)
-        .childFile('trace.$archName.json');
+    final File aotSnapshot = _fileSystem.directory(buildInfo.codeSizeDirectory).childFile('snapshot.$archName.json');
+    final File precompilerTrace = _fileSystem.directory(buildInfo.codeSizeDirectory).childFile('trace.$archName.json');
     final Map<String, Object?> output = await sizeAnalyzer.analyzeZipSizeAndAotSnapshot(
       zipFile: zipFile,
       aotSnapshot: aotSnapshot,
@@ -772,9 +731,7 @@ class AndroidGradleBuilder implements AndroidBuilder {
         '-Ptarget-platform=${_getTargetPlatformByLocalEnginePath(localEngineInfo.targetOutPath)}',
       );
     } else if (androidBuildInfo.targetArchs.isNotEmpty) {
-      final String targetPlatforms = androidBuildInfo.targetArchs
-          .map((AndroidArch e) => e.platformName)
-          .join(',');
+      final String targetPlatforms = androidBuildInfo.targetArchs.map((AndroidArch e) => e.platformName).join(',');
       command.add('-Ptarget-platform=$targetPlatforms');
     }
 
@@ -871,9 +828,7 @@ class AndroidGradleBuilder implements AndroidBuilder {
     required FlutterProject project,
   }) async {
     final String taskName = _getOutputAppLinkSettingsTaskFor(buildVariant);
-    final Directory directory = await project.buildDirectory
-        .childDirectory('deeplink_data')
-        .create(recursive: true);
+    final Directory directory = await project.buildDirectory.childDirectory('deeplink_data').create(recursive: true);
     final String outputPath = globals.fs.path.join(
       directory.absolute.path,
       'app-link-settings-$buildVariant.json',
@@ -1060,14 +1015,12 @@ Iterable<String> findApkFilesModule(
 Iterable<String> listApkPaths(AndroidBuildInfo androidBuildInfo) {
   final String buildType = camelCase(androidBuildInfo.buildInfo.modeName);
   final List<String> apkPartialName = <String>[
-    if (androidBuildInfo.buildInfo.flavor?.isNotEmpty ?? false)
-      androidBuildInfo.buildInfo.lowerCasedFlavor!,
+    if (androidBuildInfo.buildInfo.flavor?.isNotEmpty ?? false) androidBuildInfo.buildInfo.lowerCasedFlavor!,
     '$buildType.apk',
   ];
   if (androidBuildInfo.splitPerAbi) {
     return <String>[
-      for (final AndroidArch androidArch in androidBuildInfo.targetArchs)
-        <String>['app', androidArch.archName, ...apkPartialName].join('-'),
+      for (final AndroidArch androidArch in androidBuildInfo.targetArchs) <String>['app', androidArch.archName, ...apkPartialName].join('-'),
     ];
   }
   return <String>[
@@ -1093,25 +1046,19 @@ File findBundleFile(
     // For example: In release mode, if the flavor name is `foo_bar`, then
     // the directory name is `foo_barRelease`.
     fileCandidates.add(
-      getBundleDirectory(project)
-          .childDirectory('${buildInfo.lowerCasedFlavor}${camelCase('_${buildInfo.modeName}')}')
-          .childFile('app.aab'),
+      getBundleDirectory(project).childDirectory('${buildInfo.lowerCasedFlavor}${camelCase('_${buildInfo.modeName}')}').childFile('app.aab'),
     );
 
     // The Android Gradle plugin 3.5.0 adds the flavor name to file name.
     // For example: In release mode, if the flavor name is `foo_bar`, then
     // the file name is `app-foo_bar-release.aab`.
     fileCandidates.add(
-      getBundleDirectory(project)
-          .childDirectory('${buildInfo.lowerCasedFlavor}${camelCase('_${buildInfo.modeName}')}')
-          .childFile('app-${buildInfo.lowerCasedFlavor}-${buildInfo.modeName}.aab'),
+      getBundleDirectory(project).childDirectory('${buildInfo.lowerCasedFlavor}${camelCase('_${buildInfo.modeName}')}').childFile('app-${buildInfo.lowerCasedFlavor}-${buildInfo.modeName}.aab'),
     );
 
     // The Android Gradle plugin 4.1.0 does only lowercase the first character of flavor name.
     fileCandidates.add(
-      getBundleDirectory(project)
-          .childDirectory('${buildInfo.uncapitalizedFlavor}${camelCase('_${buildInfo.modeName}')}')
-          .childFile('app-${buildInfo.uncapitalizedFlavor}-${buildInfo.modeName}.aab'),
+      getBundleDirectory(project).childDirectory('${buildInfo.uncapitalizedFlavor}${camelCase('_${buildInfo.modeName}')}').childFile('app-${buildInfo.uncapitalizedFlavor}-${buildInfo.modeName}.aab'),
     );
 
     // The Android Gradle plugin uses kebab-case and lowercases the first character of the flavor name
@@ -1156,8 +1103,7 @@ Never _exitWithExpectedFileNotFound({
     project.android.hostAppGradleRoot,
     logger,
   );
-  final String gradleBuildSettings =
-      'androidGradlePluginVersion: $androidGradlePluginVersion, '
+  final String gradleBuildSettings = 'androidGradlePluginVersion: $androidGradlePluginVersion, '
       'fileExtension: $fileExtension';
 
   analytics.send(

@@ -19,8 +19,7 @@ import '../runner/flutter_command.dart' show FlutterCommandResult;
 import 'build.dart';
 
 class BuildAppBundleCommand extends BuildSubCommand {
-  BuildAppBundleCommand({required super.logger, bool verboseHelp = false})
-    : super(verboseHelp: verboseHelp) {
+  BuildAppBundleCommand({required super.logger, bool verboseHelp = false}) : super(verboseHelp: verboseHelp) {
     addTreeShakeIconsFlag();
     usesTargetOption();
     addBuildModeFlags(verboseHelp: verboseHelp);
@@ -50,8 +49,7 @@ class BuildAppBundleCommand extends BuildSubCommand {
     argParser.addFlag(
       'deferred-components',
       defaultsTo: true,
-      help:
-          'Setting to false disables building with deferred components. All deferred code '
+      help: 'Setting to false disables building with deferred components. All deferred code '
           'will be compiled into the base app, and assets act as if they were defined under'
           ' the regular assets section in pubspec.yaml. This flag has no effect on '
           'non-deferred components apps.',
@@ -59,8 +57,7 @@ class BuildAppBundleCommand extends BuildSubCommand {
     argParser.addFlag(
       'validate-deferred-components',
       defaultsTo: true,
-      help:
-          'When enabled, deferred component apps will fail to build if setup problems are '
+      help: 'When enabled, deferred component apps will fail to build if setup problems are '
           'detected that would prevent deferred components from functioning properly. The '
           'tooling also provides guidance on how to set up the project files to pass this '
           'verification. Disabling setup verification will always attempt to fully build '
@@ -77,17 +74,15 @@ class BuildAppBundleCommand extends BuildSubCommand {
   List<String> get aliases => const <String>['aab'];
 
   @override
-  DeprecationBehavior get deprecationBehavior =>
-      boolArg('ignore-deprecation') ? DeprecationBehavior.ignore : DeprecationBehavior.exit;
+  DeprecationBehavior get deprecationBehavior => boolArg('ignore-deprecation') ? DeprecationBehavior.ignore : DeprecationBehavior.exit;
 
   @override
   Future<Set<DevelopmentArtifact>> get requiredArtifacts async => <DevelopmentArtifact>{
-    DevelopmentArtifact.androidGenSnapshot,
-  };
+        DevelopmentArtifact.androidGenSnapshot,
+      };
 
   @override
-  final String description =
-      'Build an Android App Bundle file from your app.\n\n'
+  final String description = 'Build an Android App Bundle file from your app.\n\n'
       "This command can build debug and release versions of an app bundle for your application. 'debug' builds support "
       "debugging and a quick development cycle. 'release' builds don't support debugging and are "
       'suitable for deploying to app stores. \n app bundle improves your app size';
@@ -147,30 +142,14 @@ class BuildAppBundleCommand extends BuildSubCommand {
     );
     // Do all setup verification that doesn't involve loading units. Checks that
     // require generated loading units are done after gen_snapshot in assemble.
-<<<<<<< HEAD
     final List<DeferredComponent>? deferredComponents = FlutterProject.current().manifest.deferredComponents;
-    if (deferredComponents != null && boolArg('deferred-components')) {
-      // Record to analytics that DeferredComponents is being used.
-      globals.analytics.send(Event.flutterBuildInfo(
-        label: 'build-appbundle-deferred-components',
-        buildType: 'android',
-      ));
-    }
-    if (deferredComponents != null && boolArg('deferred-components') && boolArg('validate-deferred-components') && !boolArg('debug')) {
-=======
-    final List<DeferredComponent>? deferredComponents =
-        FlutterProject.current().manifest.deferredComponents;
     if (deferredComponents != null && boolArg('deferred-components')) {
       // Record to analytics that DeferredComponents is being used.
       globals.analytics.send(
         Event.flutterBuildInfo(label: 'build-appbundle-deferred-components', buildType: 'android'),
       );
     }
-    if (deferredComponents != null &&
-        boolArg('deferred-components') &&
-        boolArg('validate-deferred-components') &&
-        !boolArg('debug')) {
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
+    if (deferredComponents != null && boolArg('deferred-components') && boolArg('validate-deferred-components') && !boolArg('debug')) {
       final DeferredComponentsPrebuildValidator validator = DeferredComponentsPrebuildValidator(
         project.directory,
         globals.logger,

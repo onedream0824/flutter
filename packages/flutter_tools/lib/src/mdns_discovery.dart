@@ -29,11 +29,11 @@ class MDnsVmServiceDiscovery {
     required Logger logger,
     required Usage flutterUsage,
     required Analytics analytics,
-  }) : _client = mdnsClient ?? MDnsClient(),
-       _preliminaryClient = preliminaryMDnsClient,
-       _logger = logger,
-       _flutterUsage = flutterUsage,
-       _analytics = analytics;
+  })  : _client = mdnsClient ?? MDnsClient(),
+        _preliminaryClient = preliminaryMDnsClient,
+        _logger = logger,
+        _flutterUsage = flutterUsage,
+        _analytics = analytics;
 
   final MDnsClient _client;
 
@@ -220,8 +220,7 @@ class MDnsVmServiceDiscovery {
     // socket exceptions are routed to the current zone. Create an error zone to
     // catch the socket exception.
     // See: https://github.com/flutter/flutter/issues/150131
-    final Completer<List<MDnsVmServiceDiscoveryResult>> completer =
-        Completer<List<MDnsVmServiceDiscoveryResult>>();
+    final Completer<List<MDnsVmServiceDiscoveryResult>> completer = Completer<List<MDnsVmServiceDiscoveryResult>>();
     unawaited(
       runZonedGuarded(
         () async {
@@ -299,34 +298,10 @@ class MDnsVmServiceDiscovery {
       final Set<String> uniqueDomainNamesInResults = <String>{};
 
       // Listen for mDNS connections until timeout.
-<<<<<<< HEAD
-      final Stream<PtrResourceRecord> ptrResourceStream;
-
-      try {
-        ptrResourceStream = client.lookup<PtrResourceRecord>(
-          ResourceRecordQuery.serverPointer(dartVmServiceName),
-          timeout: timeout,
-        );
-      } on SocketException catch (e, stacktrace) {
-        _logger.printError(e.message);
-        _logger.printTrace(stacktrace.toString());
-        if (globals.platform.isMacOS) {
-          throwToolExit(
-            'You might be having a permissions issue with your IDE. '
-            'Please try going to '
-            'System Settings -> Privacy & Security -> Local Network -> '
-            '[Find your IDE] -> Toggle ON, then restart your phone.'
-          );
-        } else {
-          rethrow;
-        }
-      }
-=======
       final Stream<PtrResourceRecord> ptrResourceStream = client.lookup<PtrResourceRecord>(
         ResourceRecordQuery.serverPointer(dartVmServiceName),
         timeout: timeout,
       );
->>>>>>> 35c388afb57ef061d06a39b537336c87e0e3d1b1
 
       await for (final PtrResourceRecord ptr in ptrResourceStream) {
         uniqueDomainNames.add(ptr.domainName);
@@ -349,10 +324,7 @@ class MDnsVmServiceDiscovery {
         }
 
         _logger.printTrace('Checking for available port on $domainName');
-        final List<SrvResourceRecord> srvRecords =
-            await client
-                .lookup<SrvResourceRecord>(ResourceRecordQuery.service(domainName))
-                .toList();
+        final List<SrvResourceRecord> srvRecords = await client.lookup<SrvResourceRecord>(ResourceRecordQuery.service(domainName)).toList();
         if (srvRecords.isEmpty) {
           continue;
         }
@@ -379,24 +351,18 @@ class MDnsVmServiceDiscovery {
         // Get the IP address of the device if using the IP as the host.
         InternetAddress? ipAddress;
         if (useDeviceIPAsHost) {
-          List<IPAddressResourceRecord> ipAddresses =
-              await client
-                  .lookup<IPAddressResourceRecord>(
-                    ipv6
-                        ? ResourceRecordQuery.addressIPv6(srvRecord.target)
-                        : ResourceRecordQuery.addressIPv4(srvRecord.target),
-                  )
-                  .toList();
+          List<IPAddressResourceRecord> ipAddresses = await client
+              .lookup<IPAddressResourceRecord>(
+                ipv6 ? ResourceRecordQuery.addressIPv6(srvRecord.target) : ResourceRecordQuery.addressIPv4(srvRecord.target),
+              )
+              .toList();
           if (ipAddresses.isEmpty) {
             throwToolExit('Did not find IP for service ${srvRecord.target}.');
           }
 
           // Filter out link-local addresses.
           if (ipAddresses.length > 1) {
-            ipAddresses =
-                ipAddresses
-                    .where((IPAddressResourceRecord element) => !element.address.isLinkLocal)
-                    .toList();
+            ipAddresses = ipAddresses.where((IPAddressResourceRecord element) => !element.address.isLinkLocal).toList();
           }
 
           ipAddress = ipAddresses.first.address;
@@ -409,8 +375,7 @@ class MDnsVmServiceDiscovery {
         }
 
         _logger.printTrace('Checking for authentication code for $domainName');
-        final List<TxtResourceRecord> txt =
-            await client.lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName)).toList();
+        final List<TxtResourceRecord> txt = await client.lookup<TxtResourceRecord>(ResourceRecordQuery.text(domainName)).toList();
 
         String authCode = '';
         if (txt.isNotEmpty) {
@@ -446,9 +411,9 @@ class MDnsVmServiceDiscovery {
     // Remove `.local` from the name along with any non-word, non-digit characters.
     final RegExp cleanedNameRegex = RegExp(r'\.local|\W');
     final String cleanedDeviceName = deviceName.trim().toLowerCase().replaceAll(
-      cleanedNameRegex,
-      '',
-    );
+          cleanedNameRegex,
+          '',
+        );
     final String cleanedTargetName = targetName.toLowerCase().replaceAll(cleanedNameRegex, '');
     return cleanedDeviceName == cleanedTargetName;
   }
@@ -589,8 +554,7 @@ class MDnsVmServiceDiscovery {
       _logInterfaces(interfaces);
     }
     final bool hasIPv4LinkLocal = interfaces.any(
-      (NetworkInterface interface) =>
-          interface.addresses.any((InternetAddress address) => address.isLinkLocal),
+      (NetworkInterface interface) => interface.addresses.any((InternetAddress address) => address.isLinkLocal),
     );
     if (hasIPv4LinkLocal) {
       _logger.printTrace('An interface with an ipv4 link local address was found.');
@@ -674,10 +638,7 @@ Future<Uri> buildVMServiceUri(
     // so just use the device's port.
     actualHostPort = devicePort;
   } else {
-    actualHostPort =
-        hostVmservicePort == 0
-            ? await device.portForwarder?.forward(devicePort)
-            : hostVmservicePort;
+    actualHostPort = hostVmservicePort == 0 ? await device.portForwarder?.forward(devicePort) : hostVmservicePort;
   }
   return Uri(scheme: 'http', host: host, port: actualHostPort, path: path);
 }
